@@ -10,8 +10,10 @@ app.config["CORS_HEADERS"] = "Content-Type"
 @app.route("/")
 @cross_origin()
 def generate():
-    token = request.headers["X-Gitlab-Token"]
-    generate_repo(gitlab_token=token)
+    gitlab_token = request.headers["X-Gitlab-Token"]
+    supabase_token = request.headers["X-Supabase-Token"]
+    study_id = request.headers["X-Study-Id"]
+    generate_repo(gitlab_token,supabase_token, study_id)
     return "Finished generating repository"
 
 if __name__ == "__main__":
