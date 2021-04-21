@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 
-from generator import generate_repo
+from utils.generator import generate_repo
 
 app = FastAPI()
 

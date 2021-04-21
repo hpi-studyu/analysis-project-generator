@@ -1,5 +1,6 @@
 import gitlab
 
+
 def create_user(gl):
     # Create new user on own Gitlab instance
     user_data = {

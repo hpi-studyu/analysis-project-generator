@@ -1,13 +1,15 @@
-from utils import fetchStudySchema, fill_file_templates
-from gitlab_utils import create_project_file, create_project
+import json
+import os
+import random
+import shutil
+import string
+
 import gitlab
 from copier import run_auto
-import os
-import shutil
-import random, string
-from supabase_py import create_client, Client
 from dotenv import load_dotenv
-import json
+from supabase_py import Client, create_client
+
+from utils.gitlab_utils import create_project, create_project_file
 
 load_dotenv()
 supabase_url = os.environ.get("SUPABASE_URL")
@@ -41,7 +43,7 @@ def generate_repo(gitlab_token, supabase_token, study_id):
         {
             "action": "create",
             "file_path": "study.schema.json",
-            "content": json.dumps(study, indent = 4),
+            "content": json.dumps(study, indent=4),
         }
     )
 
