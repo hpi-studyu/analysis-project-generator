@@ -1,5 +1,0 @@
-copier -e git://github.com/copier-org/copier.git
-fastapi[all]
-python-dotenv
-python-gitlab
-supabase_py
