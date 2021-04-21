@@ -17,3 +17,13 @@ class SupabaseService:
         )
         print(study["data"])
         return study["data"]
+    
+    def fetch_subjects_for_study(self, study_id):
+        subjects = (
+            self.supabase.table("study_subject")
+            .select("*", "subject_progress(*)")
+            .eq("studyId", study_id)
+            .execute()
+        )
+        print(subjects["data"])
+        return subjects["data"]

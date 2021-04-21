@@ -16,6 +16,7 @@ def generate_repo(gitlab_token, supabase_token, study_id):
         os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_ANON_KEY")
     )
     study = sbs.fetch_study(study_id)
+    subjects = sbs.fetch_subjects_for_study(study["id"])
 
     generate_files_from_template(
         study_title=study["title"], path=os.environ.get("PROJECT_PATH")
@@ -26,21 +27,30 @@ def generate_repo(gitlab_token, supabase_token, study_id):
     project = gs.create_project(study["title"])
     print(f"Created project: {project.name}")
 
-    generate_initial_commit(gs, project, study)
+    generate_initial_commit(gs, project, study, subjects)
 
-    print(f"Finished generating repository from template")
+    print(f"Committed initial project")
 
 
-def generate_initial_commit(gs, project, study):
+def generate_initial_commit(gs, project, study, subjects):
     commit_actions = [
         commit_action(file_path, os.environ.get("PROJECT_PATH"))
         for file_path in walk_generated_project(os.environ.get("PROJECT_PATH"))
     ]
+
     commit_actions.append(
         {
             "action": "create",
-            "file_path": "study.schema.json",
+            "file_path": "data/study.schema.json",
             "content": json.dumps(study, indent=4),
+        }
+    )
+
+    commit_actions.append(
+        {
+            "action": "create",
+            "file_path": "data/subjects.json",
+            "content": json.dumps(subjects, indent=4),
         }
     )
 
