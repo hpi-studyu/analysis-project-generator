@@ -1,1 +1,1 @@
-uvicorn --app-dir app main:app --reload
+poetry run uvicorn --app-dir app main:app --reload
