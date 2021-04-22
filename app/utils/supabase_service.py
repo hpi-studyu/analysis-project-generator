@@ -1,11 +1,11 @@
-import os
+from typing import Any, Dict
 
 from supabase_py import Client, create_client
 
 
 class SupabaseService:
-    def __init__(self, url: str, key: str):
-        self.supabase: Client = create_client(url, key)
+    def __init__(self, url: str, key: str, session: Dict[str, Any]):
+        self.supabase: Client = create_client(url, key, session)
 
     def fetch_study(self, study_id):
         study = (
@@ -17,7 +17,7 @@ class SupabaseService:
         )
         print(study["data"])
         return study["data"]
-    
+
     def fetch_subjects_for_study(self, study_id):
         subjects = (
             self.supabase.table("study_subject")

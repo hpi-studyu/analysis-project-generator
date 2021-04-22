@@ -10,10 +10,13 @@ from utils.supabase_service import SupabaseService
 load_dotenv()
 
 
-def generate_repo(gitlab_token, supabase_token, study_id):
+def generate_repo(session, study_id):
+    supabase_session = json.loads(session)
 
     sbs = SupabaseService(
-        os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_ANON_KEY")
+        os.environ.get("SUPABASE_URL"),
+        os.environ.get("SUPABASE_ANON_KEY"),
+        supabase_session,
     )
     study = sbs.fetch_study(study_id)
     subjects = sbs.fetch_subjects_for_study(study["id"])
@@ -22,7 +25,7 @@ def generate_repo(gitlab_token, supabase_token, study_id):
         study_title=study["title"], path=os.environ.get("PROJECT_PATH")
     )
 
-    gs = GitlabService(oauth_token=gitlab_token)
+    gs = GitlabService(oauth_token=supabase_session["provider_token"])
 
     project = gs.create_project(study["title"])
     print(f"Created project: {project.name}")
