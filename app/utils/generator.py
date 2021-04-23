@@ -25,7 +25,7 @@ def generate_repo(sbs: SupabaseService, gs: GitlabService, study_id: str):
     generate_initial_commit(gs, project)
     print("Committed initial files")
 
-    fetch_new_study_data(sbs, gs, study_id, project)
+    fetch_new_study_data(sbs, gs, study_id, project, 'create')
     print("Fetched newest study data")
 
     return project.id

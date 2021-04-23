@@ -8,14 +8,22 @@ from utils.supabase_service import SupabaseService
 
 
 def fetch_new_study_data_with_project_id(
-    sbs: SupabaseService, gs: GitlabService, study_id: str, project_id: str
+    sbs: SupabaseService,
+    gs: GitlabService,
+    study_id: str,
+    project_id: str,
+    action: str,
 ):
     project = gs.fetch_project(project_id)
-    fetch_new_study_data(sbs, gs, study_id, project)
+    fetch_new_study_data(sbs, gs, study_id, project, action)
 
 
 def fetch_new_study_data(
-    sbs: SupabaseService, gs: GitlabService, study_id: str, project: Project
+    sbs: SupabaseService,
+    gs: GitlabService,
+    study_id: str,
+    project: Project,
+    action: str,
 ):
     study = sbs.fetch_study(study_id)
     subjects = sbs.fetch_subjects_for_study(study["id"])
@@ -23,7 +31,7 @@ def fetch_new_study_data(
     commit_actions: List[Dict[str, str]] = []
     commit_actions.append(
         {
-            "action": "update",
+            "action": action,
             "file_path": "data/study.schema.json",
             "content": json.dumps(study, indent=4),
         }
@@ -31,7 +39,7 @@ def fetch_new_study_data(
 
     commit_actions.append(
         {
-            "action": "update",
+            "action": action,
             "file_path": "data/subjects.json",
             "content": json.dumps(subjects, indent=4),
         }

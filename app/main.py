@@ -59,6 +59,6 @@ async def update_repo(
 
     gs = GitlabService(oauth_token=sbs.session["provider_token"])
 
-    fetch_new_study_data_with_project_id(sbs, gs, x_study_id, x_project_id)
+    fetch_new_study_data_with_project_id(sbs, gs, x_study_id, x_project_id, 'update')
 
     return {"message": "Updating repo with study data"}
