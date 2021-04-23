@@ -12,8 +12,10 @@ python-dotenv = "^0.17.0"
 python-gitlab = "^2.6.0"
 supabase-py = {git = "https://github.com/nstrelow/supabase-py.git"}
 
+
 [tool.poetry.dev-dependencies]
 black = {version = "^20.8b1", allow-prereleases = true}
+pylint = "^2.7.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
