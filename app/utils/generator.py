@@ -5,57 +5,37 @@ from dotenv import load_dotenv
 
 from utils.copier import generate_files_from_template
 from utils.gitlab_service import GitlabService
+from utils.study_data import fetch_new_study_data
 from utils.supabase_service import SupabaseService
 
 load_dotenv()
 
 
-def generate_repo(session, study_id):
-    supabase_session = json.loads(session)
+def generate_repo(sbs: SupabaseService, gs: GitlabService, study_id: str):
 
-    sbs = SupabaseService(
-        os.environ.get("SUPABASE_URL"),
-        os.environ.get("SUPABASE_ANON_KEY"),
-        supabase_session,
-    )
     study = sbs.fetch_study(study_id)
-    subjects = sbs.fetch_subjects_for_study(study["id"])
 
     generate_files_from_template(
         study_title=study["title"], path=os.environ.get("PROJECT_PATH")
     )
 
-    gs = GitlabService(oauth_token=supabase_session["provider_token"])
-
     project = gs.create_project(study["title"])
     print(f"Created project: {project.name}")
 
-    generate_initial_commit(gs, project, study, subjects)
+    generate_initial_commit(gs, project)
+    print("Committed initial files")
 
-    print(f"Committed initial project")
+    fetch_new_study_data(sbs, gs, study_id, project)
+    print("Fetched newest study data")
+
+    return project.id
 
 
-def generate_initial_commit(gs, project, study, subjects):
+def generate_initial_commit(gs, project):
     commit_actions = [
         commit_action(file_path, os.environ.get("PROJECT_PATH"))
         for file_path in walk_generated_project(os.environ.get("PROJECT_PATH"))
     ]
-
-    commit_actions.append(
-        {
-            "action": "create",
-            "file_path": "data/study.schema.json",
-            "content": json.dumps(study, indent=4),
-        }
-    )
-
-    commit_actions.append(
-        {
-            "action": "create",
-            "file_path": "data/subjects.json",
-            "content": json.dumps(subjects, indent=4),
-        }
-    )
 
     return gs.make_commit(
         project=project,
@@ -75,11 +55,6 @@ def commit_action(file_path: str, project_path: str, action: str = "create"):
 def walk_generated_project(project_path):
     for root, dirs, files in os.walk(project_path):
         for name in files:
-            print(
-                os.path.relpath(os.path.join(root, name), project_path).replace(
-                    os.sep, "/"
-                )
-            )
             yield os.path.relpath(os.path.join(root, name), project_path).replace(
                 os.sep, "/"
             )

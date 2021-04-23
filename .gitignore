@@ -134,3 +134,6 @@ dmypy.json
 
 # generated
 generated/
+
+# I need that really
+deleteAllGitlabRepos.py

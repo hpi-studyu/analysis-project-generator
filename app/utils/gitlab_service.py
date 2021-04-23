@@ -21,7 +21,7 @@ class GitlabService:
         return user
 
     def create_project(self, project_title: str) -> Project:
-        return self.gl.projects.create({"name": project_title})
+        return self.gl.projects.create({"name": project_title, "visibility": "public"})
 
     def create_project_file(self, project: Project, name: str, content: dict):
         return project.files.create(
@@ -44,8 +44,11 @@ class GitlabService:
     ):
         commitData = {
             "branch": "master",
-            "commit_message": "Generated project from copier-studyu\n\nhttps://github.com/hpi-studyu/copier-studyu",
+            "commit_message": message,
             "actions": actions,
         }
 
         return project.commits.create(commitData)
+
+    def fetch_project(self, project_id: str) -> Project:
+        return self.gl.projects.get(project_id)
